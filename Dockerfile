@@ -1,4 +1,4 @@
-FROM centos:7
+FROM centos:7.6.1810
 MAINTAINER Syhily, syhily@gmail.com
 
 # Docker Build Arguments, For further upgrade
