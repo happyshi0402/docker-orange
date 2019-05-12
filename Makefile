@@ -1,4 +1,4 @@
-IMAGE_NAME = syhily/orange
+IMAGE_NAME = wsf/orange
 
 build:
 	docker build -t $(IMAGE_NAME) .
