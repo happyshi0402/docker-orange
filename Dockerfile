@@ -20,30 +20,39 @@ ADD docker-entrypoint.sh docker-entrypoint.sh
 # 10) Fix file permission
 RUN \
     chmod 755 docker-entrypoint.sh \
-    && mv docker-entrypoint.sh /usr/local/bin \
+    && mv docker-entrypoint.sh /usr/local/bin
 
-    && yum-config-manager --add-repo https://openresty.org/yum/cn/centos/OpenResty.repo \
-    && yum install -y epel-release \
-    && yum install -y dnsmasq openresty openresty-resty make telnet \
+RUN \
+    yum-config-manager --add-repo https://openresty.org/yum/cn/centos/OpenResty.repo \
+    && yum install -y epel-release
+RUN \
+    yum install -y dnsmasq openresty openresty-resty make telnet \
 
-    && yum clean all \
+    && yum clean all
 
-    && ln -s /usr/local/openresty/nginx/sbin/nginx /usr/local/bin/nginx \
+RUN \
+    ln -s /usr/local/openresty/nginx/sbin/nginx /usr/local/bin/nginx
 
-    && cd /tmp \
-    && curl -fSL https://github.com/sumory/lor/archive/v${LOR_VERSION}.tar.gz -o lor.tar.gz \
+    #
+RUN mkdir -p /home/docker
+COPY lor-${LOR_VERSION}.tar.gz /home/docker/lor.tar.gz
+COPY orange-${ORANGE_VERSION}.tar.gz /home/docker/orange.tar.gz
+RUN \
+    cd /home/docker \
+#    && curl -fSL https://github.com/sumory/lor/archive/v${LOR_VERSION}.tar.gz -o lor.tar.gz \
     && tar zxf lor.tar.gz \
-    && cd /tmp/lor-${LOR_VERSION} \
-    && make install \
+    && cd lor-${LOR_VERSION} \
+    && make install
 
-    && cd /tmp \
-    && curl -fSL https://github.com/sumory/orange/archive/v${ORANGE_VERSION}.tar.gz -o orange.tar.gz \
+RUN \
+    cd  /home/docker \
+#    && curl -fSL https://github.com/sumory/orange/archive/v${ORANGE_VERSION}.tar.gz -o orange.tar.gz \
     && tar zxf orange.tar.gz \
     && cd orange-${ORANGE_VERSION} \
     && make install \
 
     && cd / \
-    && rm -rf /tmp/* \
+    && rm -rf /home/docker/* \
 
     && echo "user=root" > /etc/dnsmasq.conf \
     && echo 'domain-needed' >> /etc/dnsmasq.conf \
